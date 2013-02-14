@@ -82,16 +82,11 @@ function islandora_simple_workflow_manage_list() {
  * @return mixed
  */
 function _islandora_simple_workflow_get_inactive_objects() {
-  module_load_include('inc', 'islandora', 'includes/tuque');
-
   $connection = new IslandoraTuque();
-
   $query = 'select $object $title from <#ri>
     where $object <dc:title> $title
     and $object <fedora-model:state> <info:fedora/fedora-system:def/model#Inactive>
     order by $object';
-
   $results = $connection->repository->ri->itqlQuery($query);
-
   return $results;
 }
