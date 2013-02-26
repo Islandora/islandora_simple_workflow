@@ -36,15 +36,15 @@ function islandora_simple_workflow_permission() {
 }
 
 /**
- * Implements hook_islandora_ingest_pre_ingest().
- *
- * @param $object
+ * Implements hook_islandora_object_alter().
  */
-function islandora_simple_workflow_islandora_ingest_pre_ingest(NewFedoraObject $object) {
-  if (!user_access('bypass inactive object state')) {
-    $object->state = 'I';
-  }
-}
+ function islandora_simple_workflow_islandora_object_alter(AbstractFedoraObject $object, array &$context) {
+   if ($context['action'] == 'ingest') {
+     if (!user_access('bypass inactive object state')) {
+       $object->state = 'I';
+     }
+   }
+ }
 
 /**
  * Page callback, returns list of inactive objects.
