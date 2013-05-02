@@ -38,7 +38,7 @@ function islandora_simple_workflow_permission() {
 /**
  * Implements hook_islandora_object_alter().
  */
- function islandora_simple_workflow_islandora_object_alter(AbstractFedoraObject $object, array &$context) {
+ function islandora_simple_workflow_islandora_object_alter(AbstractObject $object, array &$context) {
    if ($context['action'] == 'ingest') {
      if (!user_access('bypass inactive object state')) {
        $object->state = 'I';
