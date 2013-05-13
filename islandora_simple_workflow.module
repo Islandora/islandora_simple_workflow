@@ -1,9 +1,12 @@
 <?php
 
 /**
+ * @file
+ * A simple editorial workflow for Islandora.
+ */
+
+/**
  * Implements hook_menu().
- *
- * @return array
  */
 function islandora_simple_workflow_menu() {
   $items = array();
@@ -19,8 +22,6 @@ function islandora_simple_workflow_menu() {
 
 /**
  * Implements hook_permission().
- *
- * @return array
  */
 function islandora_simple_workflow_permission() {
   return array(
@@ -38,18 +39,19 @@ function islandora_simple_workflow_permission() {
 /**
  * Implements hook_islandora_object_alter().
  */
- function islandora_simple_workflow_islandora_object_alter(AbstractObject $object, array &$context) {
-   if ($context['action'] == 'ingest') {
-     if (!user_access('bypass inactive object state')) {
-       $object->state = 'I';
-     }
-   }
- }
+function islandora_simple_workflow_islandora_object_alter(AbstractObject $object, array &$context) {
+  if ($context['action'] == 'ingest') {
+    if (!user_access('bypass inactive object state')) {
+      $object->state = 'I';
+    }
+  }
+}
 
 /**
- * Page callback, returns list of inactive objects.
+ * Page callback.
  *
  * @return array
+ *   List of inactive object.
  */
 function islandora_simple_workflow_manage_list() {
   $inactive_objects = _islandora_simple_workflow_get_inactive_objects();
@@ -58,7 +60,7 @@ function islandora_simple_workflow_manage_list() {
     $header = array(t('Title'), '');
     $rows = array();
 
-    foreach ($inactive_objects AS $inactive_object) {
+    foreach ($inactive_objects as $inactive_object) {
       $object_link = l($inactive_object['title']['value'], 'islandora/object/' . $inactive_object['object']['value']);
       $manage_link = l(t('Manage'), 'islandora/object/' . $inactive_object['object']['value'] . '/manage/properties');
       $rows[] = array($object_link, $manage_link);
@@ -80,6 +82,7 @@ function islandora_simple_workflow_manage_list() {
  * Query for inactive objects.
  *
  * @return mixed
+ *   The inactive objects.
  */
 function _islandora_simple_workflow_get_inactive_objects() {
   $connection = new IslandoraTuque();
