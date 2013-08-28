@@ -40,8 +40,17 @@ function islandora_simple_workflow_permission() {
  * Implements hook_islandora_object_alter().
  */
 function islandora_simple_workflow_islandora_object_alter(AbstractObject $object, array &$context) {
+  module_load_include('inc', 'islandora', 'includes/utilities');
   if ($context['action'] == 'ingest') {
-    if (!user_access('bypass inactive object state')) {
+    $connection = islandora_get_tuque_connection();
+    $enabled_solution_packs = module_invoke_all('islandora_required_objects', $connection);
+    $system_objects = array();
+    foreach ($enabled_solution_packs as $solution_pack_module => $solution_pack_info) {
+      foreach ($solution_pack_info['objects'] as $object) {
+        $system_objects[] = $object->id;
+      }
+    }
+    if (!in_array($system_objects, $object->id) && !user_access('bypass inactive object state')) {
       $object->state = 'I';
     }
   }
