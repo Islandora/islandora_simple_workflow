@@ -50,7 +50,7 @@ function islandora_simple_workflow_islandora_object_alter(AbstractObject $object
         $system_objects[] = $object->id;
       }
     }
-    if (!in_array($system_objects, $object->id) && !user_access('bypass inactive object state')) {
+    if (!in_array($object->id, $system_objects) && !user_access('bypass inactive object state')) {
       $object->state = 'I';
     }
   }
