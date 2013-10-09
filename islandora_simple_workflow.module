@@ -46,8 +46,8 @@ function islandora_simple_workflow_islandora_object_alter(AbstractObject $object
     $enabled_solution_packs = module_invoke_all('islandora_required_objects', $connection);
     $system_objects = array();
     foreach ($enabled_solution_packs as $solution_pack_module => $solution_pack_info) {
-      foreach ($solution_pack_info['objects'] as $object) {
-        $system_objects[] = $object->id;
+      foreach ($solution_pack_info['objects'] as $solution_pack_object) {
+        $system_objects[] = $solution_pack_object->id;
       }
     }
     if (!in_array($object->id, $system_objects) && !user_access('bypass inactive object state')) {
