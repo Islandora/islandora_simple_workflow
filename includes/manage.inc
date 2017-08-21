@@ -44,7 +44,6 @@ function islandora_simple_workflow_manage_form($form, $form_state) {
       $pid = $inactive_object['object']['value'];
       $rows[$pid] = array(l($inactive_object['title']['value'] . " (" . $pid . ")", "islandora/object/$pid"));
     }
-    ksort($rows);
     $form['management_table'] = array(
       '#type' => 'tableselect',
       '#header' => array(t('Object')),
