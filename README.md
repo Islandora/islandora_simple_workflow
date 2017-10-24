@@ -23,7 +23,7 @@ Simple Workflow objects can be managed at Administration » Islandora » Simple 
 
 ## Documentation
 
-Further documentation for this module is available at [our wiki](https://wiki.duraspace.org/display/ISLANDORA/Simple+Workflow).
+This module's documentation is also available at [our wiki](https://wiki.duraspace.org/display/ISLANDORA/Simple+Workflow).
 
 ## Troubleshooting/Issues
 
