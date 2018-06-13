@@ -4,7 +4,14 @@
 
 A simple editorial workflow for Islandora. Ingested objects are inactive until approved.
 
-When this module is enabled, ingested objects will have an inactive state. If a user has the permission "Bypass default inactive object state" the default behaviour (object with active state) will persist. The "Drupal Super User" (uid = 1) will always bypass the inactive state.
+When this module is enabled, ingested objects will be given the Fedora state 'inactive'. If the user creating the objects has the
+permission "Bypass default inactive object state", objects will be given the normal, 'active' state. The "Drupal Super
+User" (uid = 1) will always bypass the inactive state.
+
+By default, 'inactive' objects are not displayed in collections and are not indexed in Solr, but they are accessible
+directly (if the PID is known) by anyone who can view Islandora objects. To restrict access to inactive objects, check
+the "Lock down inactive and deleted objects" option in Islandora configuration (admin/islandora/configure) and grant the
+resulting permission to appropriate roles.
 
 ## Requirements
 
@@ -19,7 +26,7 @@ Install as usual, see [this](https://drupal.org/documentation/install/modules-th
 
 ## Configuration
 
-Simple Workflow objects can be managed at Administration » Islandora » Simple Workflow objects (admin/islandora/tools/simple_workflow/list).
+Inactive objects can be managed at Administration » Islandora » Simple Workflow objects (admin/islandora/tools/simple_workflow/list).
 
 ## Documentation
 
