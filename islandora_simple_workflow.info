@@ -3,5 +3,5 @@ description = A simple editorial workflow for Islandora. Ingested objects are in
 dependencies[] = islandora
 package = Islandora Tools
 configure = admin/islandora/tools/simple_workflow/settings
-version = 7.x-dev
+version = 7.x-1.13
 core = 7.x
