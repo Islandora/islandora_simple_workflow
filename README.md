@@ -26,7 +26,7 @@ Install as usual, see [this](https://drupal.org/documentation/install/modules-th
 
 ## Configuration
 
-Inactive objects can be managed at Administration » Islandora » Simple Workflow objects (admin/islandora/tools/simple_workflow/list).
+Inactive objects can be managed at Administration » Islandora » Islandora Utility Modules » Simple Workflow inactive objects (admin/islandora/tools/simple_workflow/list).
 
 ## Documentation
 
