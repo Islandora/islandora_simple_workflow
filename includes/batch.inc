@@ -30,7 +30,7 @@ function islandora_simple_workflow_publish_create_batch($pids) {
 }
 
 /**
- * Constructs and performs the purging batch operation.
+ * Constructs and performs the publishing batch operation.
  *
  * @param array $pids
  *   An array of pids to be published.
@@ -118,8 +118,8 @@ function islandora_simple_workflow_purge_create_batch($pids) {
  *
  * @param array $pids
  *   An array of pids to be published.
- * @param $islandora_connection
- *   A connection to fedora islandora.
+ * @param IslandoraTuque $islandora_connection
+ *   A islandora tuque connection to fedora.
  * @param array $context
  *   The context of the Drupal batch.
  */
