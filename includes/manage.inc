@@ -23,7 +23,7 @@ function islandora_simple_workflow_manage_form($form, $form_state) {
   if (isset($form_state['show_confirm'])) {
     $form['confirm_message'] = array(
       '#type' => 'item',
-      '#markup' => format_plural(count($form_state['pids_to_publish']),
+      '#markup' => format_plural(count($form_state['pids']),
       'Are you sure you want to publish the 1 object?',
       'Are you sure you want to publish the @count objects?'),
     );
@@ -32,6 +32,25 @@ function islandora_simple_workflow_manage_form($form, $form_state) {
       '#value' => t('Confirm'),
       '#weight' => 2,
       '#submit' => array('islandora_simple_workflow_manage_confirm_submit'),
+    );
+    $form['cancel_submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Cancel'),
+      '#weight' => 3,
+    );
+  }
+  elseif (isset($form_state['show_purge_confirm'])) {
+    $form['confirm_message'] = array(
+      '#type' => 'item',
+      '#markup' => format_plural(count($form_state['pids']),
+      'Are you sure you want to purge the 1 object?',
+      'Are you sure you want to purge the @count objects?'),
+    );
+    $form['confirm_submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Confirm'),
+      '#weight' => 2,
+      '#submit' => array('islandora_simple_workflow_manage_purge_confirm_submit'),
     );
     $form['cancel_submit'] = array(
       '#type' => 'submit',
@@ -97,13 +116,14 @@ function islandora_simple_workflow_manage_form($form, $form_state) {
       $form['purge_selected'] = array(
         '#type' => 'submit',
         '#name' => 'islandora-simple-workflow-purge-selected',
-        '#submit' => array('islandora_simple_workflow_manage_purge_selected_submit'),
+        '#validate' => array('islandora_simple_workflow_manage_purge_selected_validate'),
+        '#submit' => array('islandora_simple_workflow_manage_purge_submit'),
         '#value' => t('Purge Selected'),
       );
       $form['purge_all'] = array(
         '#type' => 'submit',
         '#name' => 'islandora-simple-workflow-purge-all',
-        '#submit' => array('islandora_simple_workflow_manage_purge_all_submit'),
+        '#submit' => array('islandora_simple_workflow_manage_purge_submit'),
         '#value' => t('Purge All'),
       );
     }
@@ -141,7 +161,7 @@ function islandora_simple_workflow_manage_publish_submit(&$form, &$form_state) {
   else {
     $selected = array_keys($form_state['values']['management_table']);
   }
-  $form_state['pids_to_publish'] = $selected;
+  $form_state['pids'] = $selected;
   // Rebuild to show the confirm form.
   $form_state['rebuild'] = TRUE;
   $form_state['show_confirm'] = TRUE;
@@ -157,6 +177,57 @@ function islandora_simple_workflow_manage_publish_submit(&$form, &$form_state) {
  */
 function islandora_simple_workflow_manage_confirm_submit($form, &$form_state) {
   module_load_include('inc', 'islandora_simple_workflow', 'includes/batch');
-  $batch = islandora_simple_workflow_publish_create_batch($form_state['pids_to_publish']);
+  $batch = islandora_simple_workflow_publish_create_batch($form_state['pids']);
+  batch_set($batch);
+}
+
+/**
+ * Validation for the Islandora Simple Workflow management form.
+ *
+ * @param array $form
+ *   An array representing a form within Drupal.
+ * @param array $form_state
+ *   An array containing the Drupal form state.
+ */
+function islandora_simple_workflow_manage_purge_selected_validate($form, $form_state) {
+  $selected = array_filter($form_state['values']['management_table']);
+  if (empty($selected)) {
+    form_error($form['management_table'], t('At least one object must be selected to purge!'));
+  }
+}
+
+/**
+ * Submit handler for the purge buttons in the workflow management form.
+ *
+ * @param array $form
+ *   An array representing a form within Drupal.
+ * @param array $form_state
+ *   An array containing the Drupal form state.
+ */
+function islandora_simple_workflow_manage_purge_submit($form, &$form_state) {
+  if ($form_state['triggering_element']['#name'] == 'islandora-simple-workflow-purge-selected') {
+    $selected = array_keys(array_filter($form_state['values']['management_table']));
+  }
+  else {
+    $selected = array_keys($form_state['values']['management_table']);
+  }
+  $form_state['pids'] = $selected;
+  $form['confirm_submit']['#submit'] = array('islandora_simple_workflow_manage_purge_confirm_submit');
+  // Rebuild to show the confirm form.
+  $form_state['rebuild'] = TRUE;
+  $form_state['show_purge_confirm'] = TRUE;
+}
+
+/**
+ * Submit handler for the workflow management purge confirm form.
+ *
+ * @param array $form
+ *   An array representing a form within Drupal.
+ * @param array $form_state
+ *   An array containing the Drupal form state.
+ */
+function islandora_simple_workflow_manage_purge_confirm_submit($form, &$form_state) {
+  module_load_include('inc', 'islandora_simple_workflow', 'includes/batch');
+  $batch = islandora_simple_workflow_purge_create_batch($form_state['pids']);
   batch_set($batch);
 }

@@ -30,7 +30,7 @@ function islandora_simple_workflow_publish_create_batch($pids) {
 }
 
 /**
- * Constructs and performs the publishing batch operation.
+ * Constructs and performs the purging batch operation.
  *
  * @param array $pids
  *   An array of pids to be published.
@@ -74,6 +74,98 @@ function islandora_simple_workflow_publish_batch_operation($pids, &$context) {
 function islandora_simple_workflow_publish_batch_finished($success, $results, $operations) {
   if ($success) {
     $message = format_plural(count($results['success']), 'One object published.', '@count objects published.');
+  }
+  else {
+    $message = t('Finished with an error.');
+  }
+  drupal_set_message($message);
+}
+
+/**
+ * Constructs the batch that will purge the given objects.
+ *
+ * @param array $pids
+ *   The array of pids to be published.
+ *
+ * @return array
+ *   An array detailing the batch that is about to be ran.
+ */
+function islandora_simple_workflow_purge_create_batch($pids) {
+  // Set up a batch operation.
+  $islandora_connection = islandora_get_tuque_connection();
+  $batch = array(
+    'operations' => array(
+      array(
+        'islandora_simple_workflow_purge_batch_operation',
+        array(
+          $pids,
+          $islandora_connection,
+        )
+      ),
+    ),
+    'title' => t('Purging the selected objects...'),
+    'init_message' => t('Preparing to purge objects.'),
+    'progress_message' => t('Time elapsed: @elapsed <br/>Estimated time remaining @estimate.'),
+    'error_message' => t('An error has occurred.'),
+    'finished' => 'islandora_simple_workflow_purge_batch_finished',
+    'file' => drupal_get_path('module', 'islandora_simple_workflow') . '/includes/batch.inc',
+  );
+  return $batch;
+}
+
+/**
+ * Constructs and performs the purge batch operation.
+ *
+ * @param array $pids
+ *   An array of pids to be published.
+ * @param $islandora_connection
+ *   A connection to fedora islandora.
+ * @param array $context
+ *   The context of the Drupal batch.
+ */
+function islandora_simple_workflow_purge_batch_operation($pids, $islandora_connection, &$context) {
+  if (empty($context['sandbox'])) {
+    $context['sandbox'] = array();
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['pids'] = $pids;
+    $context['sandbox']['total'] = count($pids);
+    $context['results']['success'] = array();
+  }
+
+  if (!empty($context['sandbox']['pids'])) {
+    $target_pid = array_pop($context['sandbox']['pids']);
+    $target_object = islandora_object_load($target_pid);
+    $context['message'] = t('Purging @label (@pid)  (@current of @total)...', array(
+        '@label' => $target_object->label,
+        '@pid' => $target_object->id,
+        '@current' => $context['sandbox']['progress'],
+        '@total' => $context['sandbox']['total'],
+    ));
+    if ($islandora_connection->repository->purgeObject($target_object->id)) {
+      $context['results']['success'][] = $target_pid;
+    }
+    else {
+      // report it?
+      //$context['results']['success'][] = $target_pid;
+    }
+    $context['sandbox']['progress']++;
+  }
+  $context['finished'] = ($context['sandbox']['total'] == 0) ? 1 : ($context['sandbox']['progress'] / $context['sandbox']['total']);
+}
+
+/**
+ * Finished function for the simple workflow purge batch.
+ *
+ * @param bool $success
+ *   Whether the batch was successful or not.
+ * @param array $results
+ *   An array containing the results of the batch operations.
+ * @param array $operations
+ *   The operations array that was used in the batch.
+ */
+function islandora_simple_workflow_purge_batch_finished($success, $results, $operations) {
+  if ($success) {
+    $message = format_plural(count($results['success']), 'One object purged.', '@count objects purged.');
   }
   else {
     $message = t('Finished with an error.');
