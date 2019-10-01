@@ -94,6 +94,18 @@ function islandora_simple_workflow_manage_form($form, $form_state) {
         '#submit' => array('islandora_simple_workflow_manage_publish_submit'),
         '#value' => t('Publish All'),
       );
+      $form['purge_selected'] = array(
+        '#type' => 'submit',
+        '#name' => 'islandora-simple-workflow-purge-selected',
+        '#submit' => array('islandora_simple_workflow_manage_purge_selected_submit'),
+        '#value' => t('Purge Selected'),
+      );
+      $form['purge_all'] = array(
+        '#type' => 'submit',
+        '#name' => 'islandora-simple-workflow-purge-all',
+        '#submit' => array('islandora_simple_workflow_manage_purge_all_submit'),
+        '#value' => t('Purge All'),
+      );
     }
   }
   return $form;
