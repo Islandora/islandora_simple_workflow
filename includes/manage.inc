@@ -189,7 +189,7 @@ function islandora_simple_workflow_manage_confirm_submit($form, &$form_state) {
  * @param array $form_state
  *   An array containing the Drupal form state.
  */
-function islandora_simple_workflow_manage_purge_selected_validate($form, $form_state) {
+function islandora_simple_workflow_manage_purge_selected_validate(array $form, array $form_state) {
   $selected = array_filter($form_state['values']['management_table']);
   if (empty($selected)) {
     form_error($form['management_table'], t('At least one object must be selected to purge!'));
@@ -204,7 +204,7 @@ function islandora_simple_workflow_manage_purge_selected_validate($form, $form_s
  * @param array $form_state
  *   An array containing the Drupal form state.
  */
-function islandora_simple_workflow_manage_purge_submit($form, &$form_state) {
+function islandora_simple_workflow_manage_purge_submit(array $form, array &$form_state) {
   if ($form_state['triggering_element']['#name'] == 'islandora-simple-workflow-purge-selected') {
     $selected = array_keys(array_filter($form_state['values']['management_table']));
   }
@@ -226,7 +226,7 @@ function islandora_simple_workflow_manage_purge_submit($form, &$form_state) {
  * @param array $form_state
  *   An array containing the Drupal form state.
  */
-function islandora_simple_workflow_manage_purge_confirm_submit($form, &$form_state) {
+function islandora_simple_workflow_manage_purge_confirm_submit(array $form, array &$form_state) {
   module_load_include('inc', 'islandora_simple_workflow', 'includes/batch');
   $batch = islandora_simple_workflow_purge_create_batch($form_state['pids']);
   batch_set($batch);
